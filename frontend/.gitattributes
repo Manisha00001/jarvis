@@ -1,0 +1,15 @@
+# Keep text files as LF regardless of the machine's core.autocrlf setting.
+# Prettier's default endOfLine is "lf", and ESLint runs Prettier as a lint
+# rule, so CRLF checkouts fail the production build on Windows.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.mp3 binary
+*.mp4 binary
