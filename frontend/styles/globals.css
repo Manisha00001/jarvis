@@ -41,38 +41,42 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.269 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: #1fd5f9;
-  --primary-hover: color-mix(in srgb, #1fd5f9 80%, #000);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.371 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: radial-gradient(
+    1200px 800px at 50% 30%,
+    oklch(0.22 0.04 235),
+    oklch(0.08 0.02 235)
+  );
+  --foreground: oklch(0.98 0.01 230);
+  --card: oklch(0.16 0.02 235 / 0.7);
+  --card-foreground: oklch(0.98 0.01 230);
+  --popover: oklch(0.14 0.02 235 / 0.85);
+  --popover-foreground: oklch(0.98 0.01 230);
+  --primary: #0ea5e9;
+  --primary-hover: color-mix(in srgb, #0ea5e9 80%, #000);
+  --primary-foreground: oklch(0.98 0.01 230);
+  --secondary: oklch(0.18 0.02 235 / 0.8);
+  --secondary-foreground: oklch(0.98 0.01 230);
+  --muted: oklch(0.16 0.02 235 / 0.7);
+  --muted-foreground: oklch(0.78 0.01 230);
+  --accent: oklch(0.28 0.06 235 / 0.5);
+  --accent-foreground: oklch(0.98 0.01 230);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.439 0 0);
+  --border: oklch(0.7 0.08 235 / 0.35);
+  --input: oklch(0.7 0.08 235 / 0.2);
+  --ring: oklch(0.65 0.12 235);
+  --chart-1: oklch(0.7 0.16 235);
+  --chart-2: oklch(0.72 0.14 205);
+  --chart-3: oklch(0.66 0.12 255);
+  --chart-4: oklch(0.78 0.16 195);
+  --chart-5: oklch(0.68 0.14 245);
+  --sidebar: oklch(0.12 0.02 235);
+  --sidebar-foreground: oklch(0.98 0.01 230);
+  --sidebar-primary: #0ea5e9;
+  --sidebar-primary-foreground: oklch(0.98 0.01 230);
+  --sidebar-accent: oklch(0.18 0.02 235);
+  --sidebar-accent-foreground: oklch(0.98 0.01 230);
+  --sidebar-border: oklch(0.7 0.08 235 / 0.25);
+  --sidebar-ring: oklch(0.65 0.12 235);
 }
 
 @theme inline {
@@ -122,5 +126,105 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Jarvis HUD — full-screen Iron Man interface (rendered only while connected)
+   --------------------------------------------------------------------------- */
+
+.jarvis-hud {
+  background:
+    radial-gradient(58% 52% at 50% 42%, rgba(14, 120, 180, 0.22), transparent 72%),
+    radial-gradient(130% 95% at 50% 118%, rgba(8, 47, 73, 0.42), transparent 62%), #020610;
+}
+
+.jarvis-hud-grid {
+  background-image:
+    linear-gradient(to right, rgba(56, 212, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 212, 255, 0.06) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(78% 72% at 50% 45%, #000 28%, transparent 100%);
+  mask-image: radial-gradient(78% 72% at 50% 45%, #000 28%, transparent 100%);
+}
+
+.jarvis-hud-vignette {
+  background: radial-gradient(125% 105% at 50% 48%, transparent 42%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.jarvis-hud-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(56, 212, 255, 0.035) 0 1px,
+    transparent 1px 3px
+  );
+  opacity: 0.5;
+  mix-blend-mode: screen;
+}
+
+.jarvis-figure {
+  filter: drop-shadow(0 0 16px rgba(56, 212, 255, 0.5))
+    drop-shadow(0 0 60px rgba(14, 165, 233, 0.28));
+  animation: jarvis-figure-breathe 7s ease-in-out infinite;
+}
+
+@keyframes jarvis-figure-breathe {
+  0%,
+  100% {
+    opacity: 0.86;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.jarvis-reactor-glow {
+  background: radial-gradient(
+    circle,
+    rgba(140, 244, 255, 0.6) 0%,
+    rgba(34, 190, 255, 0.3) 32%,
+    transparent 70%
+  );
+  animation: jarvis-reactor-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes jarvis-reactor-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+.jarvis-blink {
+  animation: jarvis-blink 1s steps(1, end) infinite;
+}
+
+@keyframes jarvis-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.2;
+  }
+}
+
+/* A− / A / A+ text-size controls scale the conversation transcript. */
+.jarvis-chat-transcript [data-slot='message'],
+.jarvis-chat-transcript [data-slot='bubble-content'] {
+  font-size: calc(0.875rem * var(--jarvis-text-scale, 1));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jarvis-figure,
+  .jarvis-reactor-glow,
+  .jarvis-blink {
+    animation: none !important;
   }
 }

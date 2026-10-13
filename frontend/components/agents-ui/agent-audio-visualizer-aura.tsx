@@ -19,7 +19,7 @@ import { ReactShaderToy } from '@/components/agents-ui/react-shader-toy';
 import { useAgentAudioVisualizerAura } from '@/hooks/agents-ui/use-agent-audio-visualizer-aura';
 import { cn } from '@/lib/shadcn/utils';
 
-const DEFAULT_COLOR = '#1FD5F9';
+const DEFAULT_COLOR = '#0ea5e9';
 
 function hexToRgb(hexColor: string) {
   try {
@@ -284,7 +284,7 @@ function AuraShader({
   frequency = 0.5,
   scale = 0.2,
   blur = 1.0,
-  color = DEFAULT_COLOR,
+  color = '#0ea5e9',
   colorShift = 1.0,
   brightness = 1.0,
   themeMode = typeof window !== 'undefined' && document.documentElement.classList.contains('dark')
@@ -373,7 +373,7 @@ export interface AgentAudioVisualizerAuraProps {
   state?: AgentState;
   /**
    * The color of the aura in hexidecimal format.
-   * @defaultValue '#1FD5F9'
+   * @defaultValue '#0ea5e9'
    */
   color?: `#${string}`;
   /**
@@ -415,7 +415,7 @@ export interface AgentAudioVisualizerAuraProps {
 export function AgentAudioVisualizerAura({
   size = 'lg',
   state = 'connecting',
-  color = DEFAULT_COLOR,
+  color = '#0ea5e9',
   colorShift = 0.05,
   audioTrack,
   volume,

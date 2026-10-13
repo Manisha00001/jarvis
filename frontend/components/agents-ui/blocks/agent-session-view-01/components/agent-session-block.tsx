@@ -136,6 +136,13 @@ export interface AgentSessionView_01Props {
    */
   isPreConnectBufferEnabled?: boolean;
 
+  /**
+   * Whether to render the agent audio visualizer (orb/aura) in the center tile.
+   *
+   * @default true
+   */
+  showAgentVisualizer?: boolean;
+
   /** Selects the visualizer style rendered in the main tile area. */
   audioVisualizerType?: 'bar' | 'wave' | 'grid' | 'radial' | 'aura';
   /** Primary hex color used by supported audio visualizer variants. */
@@ -164,6 +171,7 @@ export function AgentSessionView_01({
   supportsVideoInput = true,
   supportsScreenShare = true,
   isPreConnectBufferEnabled = true,
+  showAgentVisualizer = true,
   audioVisualizerType,
   audioVisualizerColor,
   audioVisualizerColorShift,
@@ -207,20 +215,21 @@ export function AgentSessionView_01({
       className={cn('bg-background relative z-10 h-full w-full overflow-hidden', className)}
       {...props}
     >
-      <Fade top className="absolute inset-x-4 top-0 z-10 h-40" />
-      {/* transcript */}
+      {/* Conversation panel (left side) */}
       <AnimatePresence>
-        {isChatOpen && (
-          <motion.div
+        {(messages.length > 0 || isChatOpen) && (
+          <motion.aside
+            key="conversation-panel"
             {...CHAT_MOTION_PROPS}
-            className="absolute inset-x-0 top-0 bottom-[135px] overflow-hidden md:bottom-[170px]"
+            aria-label="Conversation transcript"
+            className="dark absolute top-0 bottom-[135px] left-0 z-20 w-full max-w-sm overflow-hidden bg-slate-950/70 pt-16 backdrop-blur-sm md:bottom-[170px]"
           >
             <AgentChatTranscript
               agentState={agentState}
               messages={messages}
-              className="mx-auto max-w-2xl **:data-[slot=message-scroller-content]:p-4 **:data-[slot=message-scroller-content]:pt-40! md:**:data-[slot=message-scroller-content]:p-6"
+              className="jarvis-chat-transcript h-full **:data-[slot=message-scroller-content]:p-4"
             />
-          </motion.div>
+          </motion.aside>
         )}
       </AnimatePresence>
 
@@ -228,6 +237,7 @@ export function AgentSessionView_01({
       <TileLayout
         isChatOpen={isChatOpen}
         themeMode={themeMode}
+        showAgentVisualizer={showAgentVisualizer}
         audioVisualizerType={audioVisualizerType}
         audioVisualizerColor={audioVisualizerColor}
         audioVisualizerColorShift={audioVisualizerColorShift}
@@ -258,7 +268,7 @@ export function AgentSessionView_01({
             )}
           </AnimatePresence>
         )}
-        <div className="bg-background relative mx-auto max-w-2xl pb-3 md:pb-12">
+        <div className="relative mx-auto max-w-2xl pb-3 md:pb-12">
           <AgentControlBar
             variant="livekit"
             controls={controls}
@@ -266,6 +276,7 @@ export function AgentSessionView_01({
             isConnected={session.isConnected}
             onDisconnect={session.end}
             onIsChatOpenChange={setIsChatOpen}
+            className="border-cyan-300/30 bg-slate-950/60 text-cyan-100 shadow-[0_0_40px_oklch(0.7_0.18_235/0.35)] backdrop-blur-lg"
           />
         </div>
       </motion.div>

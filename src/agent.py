@@ -16,6 +16,13 @@ from livekit.agents.beta.tools import EndCallTool
 from livekit.plugins import ai_coustics, google
 
 from browser import BrowserManager
+from memory import (
+    MemoryStore,
+    MemoryTools,
+    ReminderScheduler,
+    ReminderTools,
+    format_local,
+)
 from prompts import AGENT_INSTRUCTIONS
 from tools import BrowserTools
 
@@ -23,9 +30,20 @@ load_dotenv(".env.local")
 
 
 class Assistant(Agent):
-    def __init__(self, browser: BrowserManager | None = None) -> None:
+    def __init__(
+        self,
+        browser: BrowserManager | None = None,
+        memory_store: MemoryStore | None = None,
+        reminder_scheduler: ReminderScheduler | None = None,
+    ) -> None:
         self.browser = browser or BrowserManager(headless=True)
         self.browser_tools = BrowserTools(self.browser)
+        self.memory_tools = MemoryTools(memory_store) if memory_store else None
+        self.reminder_tools = (
+            ReminderTools(memory_store, reminder_scheduler)
+            if memory_store and reminder_scheduler
+            else None
+        )
         self._end_call_tool = EndCallTool(
             extra_description=(
                 "Only end the call after the user clearly says they are finished, "
@@ -107,6 +125,14 @@ class Assistant(Agent):
                         # Special Requests
                         - If the user asks to play his theme song or to play his favorite song, open this url: https://music.youtube.com/watch?v=dWuwreQg1IA
 
+                        # Memory and reminders
+
+                        - Save something to memory only when the user explicitly asks you to remember it, and save exactly what they asked. Never save personal details on your own initiative.
+                        - Use save_memory to remember something, search_memories or list_memories to recall it, and delete_memory to forget it. If a memory request is vague or missing the detail to store, ask one short clarifying question before saving.
+                        - Use create_reminder whenever the user asks to be reminded about something. Convert times to 24-hour form, and call get_current_datetime when you need today's date to resolve a relative day.
+                        - If a reminder time is missing, ambiguous, or has already passed today, ask the user to clarify rather than guessing.
+                        - Never say something was remembered, saved, or scheduled unless the tool reported success.
+
                         # Guardrails
 
                         - Stay within safe, lawful, and appropriate use; decline harmful or out-of-scope requests.
@@ -117,8 +143,19 @@ class Assistant(Agent):
             tools=[
                 *self.browser_tools.tools,
                 *self._end_call_tool.tools,
+                *(self.memory_tools.tools if self.memory_tools else []),
+                *(self.reminder_tools.tools if self.reminder_tools else []),
             ],
         )
+
+
+def reminder_instructions(message: str, due_at: str) -> str:
+    """Build the instruction used to speak a due reminder aloud."""
+    return (
+        "A scheduled reminder is now due. Deliver it to the user now, in one "
+        f'short spoken sentence: "{message}". It was scheduled for '
+        f"{format_local(due_at)}. Do not ask unrelated questions."
+    )
 
 
 server = AgentServer()
@@ -134,6 +171,9 @@ async def my_agent(ctx: JobContext):
 
     browser = BrowserManager(headless=False)
     ctx.add_shutdown_callback(browser.close)
+
+    # Persistent local memory. Data stays in ./data and is never sent anywhere.
+    memory_store = MemoryStore()
 
     # Gemini realtime handles the voice input and output for this session.
     session = AgentSession(
@@ -166,9 +206,19 @@ async def my_agent(ctx: JobContext):
         # expressive=True, 
     )
 
+    # Deliver due reminders through the live voice conversation. Realtime models
+    # have no separate TTS, so the reminder is spoken by generating a reply.
+    async def announce_reminder(message: str, due_at: str) -> None:
+        await session.generate_reply(
+            instructions=reminder_instructions(message, due_at)
+        )
+
+    reminder_scheduler = ReminderScheduler(memory_store, announce_reminder)
+    ctx.add_shutdown_callback(reminder_scheduler.stop)
+
     # Start the session, which initializes the voice pipeline and warms up the models
     await session.start(
-        agent=Assistant(browser),
+        agent=Assistant(browser, memory_store, reminder_scheduler),
         room=ctx.room,
         room_options=room_io.RoomOptions(
             video_input=True,
@@ -182,6 +232,9 @@ async def my_agent(ctx: JobContext):
     
     # Join the room and connect to the user
     await ctx.connect()
+
+    # Only deliver reminders once the session is live. It stops with the job.
+    reminder_scheduler.start()
 
 
 if __name__ == "__main__":

@@ -41,7 +41,8 @@ export async function POST(req: Request) {
     }
 
     // Parse room config from request body.
-    const body = await req.json();
+    // An empty body is valid: treat it as no room config rather than a 500.
+    const body = await req.json().catch(() => undefined);
     const roomConfig = body?.room_config
       ? RoomConfiguration.fromJson(body.room_config, { ignoreUnknownFields: true })
       : new RoomConfiguration();

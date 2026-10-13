@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-label="Blue arc reactor background dark">
+  <defs>
+    <radialGradient id="reactorCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f0fbff" />
+      <stop offset="25%" stop-color="#b3eeff" />
+      <stop offset="55%" stop-color="#5fd6ff" />
+      <stop offset="100%" stop-color="#0066ff" />
+    </radialGradient>
+    <radialGradient id="reactorGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#5fd6ff" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#1a8cff" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#020810" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="ringStroke" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9fd9ff" stop-opacity="0.95" />
+      <stop offset="50%" stop-color="#1f8dff" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#9fd9ff" stop-opacity="0.95" />
+    </linearGradient>
+  </defs>
+  <g>
+    <circle cx="800" cy="800" r="720" fill="url(#reactorGlow)" opacity="0.4" />
+    <g opacity="0.9">
+      <circle cx="800" cy="800" r="470" fill="none" stroke="url(#ringStroke)" stroke-width="10" stroke-linecap="round" stroke-dasharray="20 28" />
+      <circle cx="800" cy="800" r="430" fill="none" stroke="#8fc9ff" stroke-width="6" opacity="0.95" />
+      <circle cx="800" cy="800" r="390" fill="none" stroke="#a6dbff" stroke-width="4" stroke-dasharray="8 14" opacity="0.9" />
+      <circle cx="800" cy="800" r="350" fill="none" stroke="#589cff" stroke-width="8" opacity="0.8" />
+      <circle cx="800" cy="800" r="310" fill="none" stroke="#8fc9ff" stroke-width="4" stroke-dasharray="12 16" opacity="0.85" />
+      <circle cx="800" cy="800" r="270" fill="none" stroke="#c2f1ff" stroke-width="6" opacity="0.95" />
+    </g>
+    <circle cx="800" cy="800" r="210" fill="url(#reactorCore)" />
+  </g>
+</svg>

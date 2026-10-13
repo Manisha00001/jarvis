@@ -70,6 +70,8 @@ export function useLocalTrackRef(source: Track.Source) {
 interface TileLayoutProps {
   themeMode?: 'dark' | 'light';
   isChatOpen: boolean;
+  /** Whether to render the agent audio visualizer (orb/aura). Defaults to true. */
+  showAgentVisualizer?: boolean;
   audioVisualizerType?: 'bar' | 'wave' | 'grid' | 'radial' | 'aura';
   audioVisualizerColor?: `#${string}`;
   audioVisualizerColorShift?: number;
@@ -84,6 +86,7 @@ interface TileLayoutProps {
 export function TileLayout({
   themeMode,
   isChatOpen,
+  showAgentVisualizer = true,
   audioVisualizerType,
   audioVisualizerColor,
   audioVisualizerColorShift,
@@ -121,7 +124,7 @@ export function TileLayout({
             ])}
           >
             <AnimatePresence mode="popLayout">
-              {!isAvatar && (
+              {!isAvatar && showAgentVisualizer && (
                 // Audio Agent
                 <motion.div
                   key="agent"
